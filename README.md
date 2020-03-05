@@ -1,6 +1,7 @@
 # Título del trabajo
 
-Descripción breve del proyecto a realizar (2-3 frases).
+Sistema de alarma de seguridad para una casa.
+Funciona con un sensor de presencia y se activa y desactiva introduciendo un código de seguridad con un mando inalámbrico, por pantalla se imprime información de la hora a la que se activa o desactiva y se detecta presencia estando la alarma activada.
 
 ## Integrantes del equipo
 
