@@ -1,7 +1,6 @@
-# Título del trabajo
+# LABERINTO
 
-Sistema de alarma de seguridad para una casa.
-Funciona con un sensor de presencia y se activa y desactiva introduciendo un código de seguridad con un mando inalámbrico, por pantalla se imprime información de la hora a la que se activa o desactiva y se detecta presencia estando la alarma activada.
+Programa en C que genera aleatoriamente un laberinto y lo resuelve, indicando si existe salida y en el caso que exista, el camino para resolverlo.
 
 ## Integrantes del equipo
 
@@ -11,4 +10,5 @@ Andrés Pérez Mora 54799 apmora.
 
 ## Objetivos del trabajo
 
-Lista de los objetivos que se persiguen con el trabajo propuesto.
+Debido a la ausencia de material para hacer un trabajo arduino nos vemos obligados a realizar el programa enteramente en C.
+
