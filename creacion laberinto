@@ -1,0 +1,120 @@
+//sin resolver
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#define DIM 30 //modifique el tamaño del laberinto
+ 
+
+ 
+ /*Laberinto aleatorio recorrido siguiendo la regla de la mano derecha la cual nos dice que si existe una salida, esta se puede encontrar recorriendo 
+ el laberinto manteniendo siempre la pared a nuestra derecha. De esta forma se recorren todos los caminos posibles hasta llegar a la salida*/
+ 
+ 
+//Se puede cambiar la aleatoriedad del laberinto con rand()%_<_
+ 
+int main()
+{
+    int referencia;
+    int boceto [DIM][DIM];
+    char laberinto[DIM][DIM];
+    int x=0;
+    int y=0;
+    srand(time(NULL));
+//Crea el laberinto
+    for(y=0;y<DIM;y++)
+    {
+        for(x=0;x<DIM;x++)
+        {
+            if((( y>0 && y<(DIM-1) && x>0 && x<(DIM-1) ) && (rand()%5<3))  ||  /*Establece la salida en x=27 y=29*/(x==(DIM-3)&&y==(DIM-1))) /* <-(?) */
+            {
+                boceto[x][y]=0;
+            }
+            else
+            {
+                boceto[x][y]=1;
+            }
+        }
+    }
+    boceto[1][1]=0;   //Pto. de partida
+    //////////// bordes del laberinto
+    
+    y=0;
+    for(x=0;x<DIM;x++)
+        {
+            laberinto[x][y]=205;
+            boceto[x][y]=0;
+        }
+    y=DIM-1;
+    for(x=0;x<DIM;x++)
+        {
+            if(x==DIM-4)
+                laberinto[x][y]=185;
+            else
+                if(x==DIM-3)
+                    laberinto[x][y]=' ';
+                else 
+                    if(x==DIM-2)
+                        laberinto[x][y]=204;
+                        else    
+                            laberinto[x][y]=205;
+            boceto[x][y]=0;
+        }
+    x=0;
+    for(y=0;y<DIM;y++)
+        {
+            laberinto[x][y]=186;
+            boceto[x][y]=0;
+        }
+     x=DIM-1;
+    for(y=0;y<DIM;y++)
+        {
+            laberinto[x][y]=186;
+            boceto[x][y]=0;
+        }
+        //Esquinas
+        laberinto[0][0]=201;
+        laberinto[0][DIM-1]=200;
+        laberinto[DIM-1][0]=187;
+        laberinto[DIM-1][DIM-1]=188;
+        ////////////Interior del laberinto
+             
+         for(y=1;y<DIM-1;y++)
+    {
+        for(x=1;x<DIM-1;x++)
+        {
+            
+        referencia=boceto[x][y];
+ 
+            switch(referencia)
+            {
+                case 0:
+                    {
+                        laberinto[x][y]=' ';
+                        break;
+                    }
+                case 1:
+                    {
+                        laberinto[x][y]='Û';
+                    }
+            } 
+        }
+    }
+        
+        
+        
+        
+        ///////
+   x=0;
+   y=0;
+//Imprime el laberinto
+    for(y=0;y<DIM;y++)
+    {
+        for(x=0;x<DIM;x++) 
+        {
+            printf("%c", laberinto[x][y]);
+        }
+        printf("\n");
+        
+    }
+    return 0;
+}
