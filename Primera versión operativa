@@ -1,0 +1,290 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#define DIM 30 //modifique el tamaño del laberinto
+#define N 0
+#define S 1
+#define E 2
+#define O 3
+
+ 
+ /*Laberinto aleatorio recorrido siguiendo la regla de la mano derecha la cual nos dice que si existe una salida, esta se puede encontrar recorriendo 
+ el laberinto manteniendo siempre la pared a nuestra derecha. De esta forma se recorren todos los caminos posibles hasta llegar a la salida*/
+ 
+ 
+//Se puede cambiar la aleatoriedad del laberinto con rand()%_<_
+
+int main()
+{
+	int referencia;
+	int boceto [DIM][DIM];
+    char laberinto[DIM][DIM];
+    int direcc;
+    int movimiento=0;
+    int x=0;
+    int y=0;
+    srand(time(NULL));
+//Crea el laberinto
+    for(y=0;y<DIM;y++)
+    {
+        for(x=0;x<DIM;x++)
+        {
+            if((( y>0 && y<(DIM-1) && x>0 && x<(DIM-1) ) && (rand()%5<3))  ||  /*Establece la salida en x=27 y=29*/(x==(DIM-3)&&y==(DIM-1))) /* <-(?) */
+            {
+                boceto[x][y]=0;
+            }
+            else
+            {
+                boceto[x][y]=1;
+            }
+        }
+    }
+    boceto[1][1]=0;   //Pto. de partida
+    //////////// bordes del laberinto
+    
+	y=0;
+    for(x=0;x<DIM;x++)
+        {
+        	laberinto[x][y]=205;
+        	boceto[x][y]=0;
+        }
+    y=DIM-1;
+    for(x=0;x<DIM;x++)
+        {
+        	if(x==DIM-4)
+        		laberinto[x][y]=185;
+        	else
+        		if(x==DIM-3)
+        			laberinto[x][y]=' ';
+        		else 
+        			if(x==DIM-2)
+        				laberinto[x][y]=204;
+        				else	
+        					laberinto[x][y]=205;
+        	boceto[x][y]=0;
+        }
+    x=0;
+    for(y=0;y<DIM;y++)
+        {
+        	laberinto[x][y]=186;
+        	boceto[x][y]=0;
+        }
+     x=DIM-1;
+    for(y=0;y<DIM;y++)
+        {
+        	laberinto[x][y]=186;
+        	boceto[x][y]=0;
+        }
+        //Esquinas
+        laberinto[0][0]=201;
+        laberinto[0][DIM-1]=200;
+        laberinto[DIM-1][0]=187;
+        laberinto[DIM-1][DIM-1]=188;
+        ////////////Interior del laberinto
+         	
+    	 for(y=1;y<DIM-1;y++)
+    {
+        for(x=1;x<DIM-1;x++)
+        {
+        	
+        referencia=boceto[x][y];
+
+        	switch(referencia)
+        	{
+        		case 0:
+        			{
+        				laberinto[x][y]=' ';
+        				break;
+					}
+				case 1:
+					{
+						laberinto[x][y]='Û';
+					}
+			} 
+		}
+	}
+        
+        
+        
+        
+        ///////
+   x=0;
+   y=0;
+//Imprime el laberinto
+    for(y=0;y<DIM;y++)
+    {
+        for(x=0;x<DIM;x++) 
+        {
+        	printf("%c", laberinto[x][y]);
+        }
+        printf("\n");
+        
+    }
+//establece la pos. inicial
+    x=1;
+    y=1;
+    direcc=1;
+//Marca la pos. inicial
+    laberinto[1][1]='Ï';
+ 
+  for(movimiento=0;(!(x==(DIM-3)&&y==(DIM-1)))&&movimiento<=((DIM-1)*(DIM-1))&&x<DIM&&y<DIM;movimiento++) //<- (?)
+  //mientras que no sea la casilla de salida && (?) && este dentro de las dimensiones del laberinto
+    {
+        switch(direcc)
+        {
+        	/* En cada caso hay que tener en cuenta el ultimo movimiento al elegir el orden de comprobaciones para seguir
+        	la regla de la mano derecha (Ej.: si nos hemos movido en direccion N la primera comprobacion sera un movimiento en
+        	direccion E, despues N, O y por ultimo deshacer el movimiento S)*/
+        	
+        	/* Si nos imaginamos una brujula recorrida en sentido antihorario la primera comprobacion siempre es la direccion anterior
+        	a la del ultimo movimiento y las siguientes corresponden al resto de direcc. de la brujula recorrida en sentido antihorario*/
+            case 0:
+            {
+                if(laberinto[x+1][y]==' '||laberinto[x+1][y]=='Ï') //Se comprueba si la casilla no es un muro
+                {
+                    x=x+1; //Se desplaza hacia el ESTE
+                    direcc=E; //Se almacena el ultimo movimiento para dirigirse al case correspondiente
+                    laberinto[x][y]='Ï'; //Se marca la casilla libre como recorrida
+                    break;
+                }
+                else if(laberinto[x][y-1]==' '||laberinto[x][y-1]=='Ï')
+                {
+                    y=y-1;//NORTE
+                    direcc=N;
+                    laberinto[x][y]='Ï';
+                    break;
+                }
+                else if(laberinto[x-1][y]==' '||laberinto[x-1][y]=='Ï')
+                {
+                    x=x-1;//OESTE
+                    direcc=O;
+                    laberinto[x][y]='Ï';
+                    break;
+                }
+                else if(laberinto[x][y+1]==' '||laberinto[x][y+1]=='Ï')
+                {
+                    y=y+1;//SUR
+                    direcc=S;
+                    laberinto[x][y]='Ï';
+                    break;
+                }
+            }
+            case 1:
+            {
+                if(laberinto[x-1][y]==' '||laberinto[x-1][y]=='Ï')
+                {
+                    x=x-1;//OESTE
+                    direcc=O;
+                    laberinto[x][y]='Ï';
+                    break;
+                }
+                else if(laberinto[x][y+1]==' '||laberinto[x][y+1]=='Ï')
+                {
+                    y=y+1;//SUR
+                    direcc=S;
+                    laberinto[x][y]='Ï';
+                    break;
+                }
+                else if(laberinto[x+1][y]==' '||laberinto[x+1][y]=='Ï')
+                {
+                    x=x+1;//ESTE
+                    direcc=E;
+                    laberinto[x][y]='Ï';
+                    break;
+                }
+                else if(laberinto[x][y-1]==' '||laberinto[x][y-1]=='Ï')
+                {
+                    y=y-1;//NORTE
+                    direcc=N;
+                    laberinto[x][y]='Ï';
+                    break;
+                }
+            }
+            case 2:
+            {
+                if(laberinto[x][y+1]==' '||laberinto[x][y+1]=='Ï')
+                {
+                    y=y+1;//SUR
+                    direcc=S;
+                    laberinto[x][y]='Ï';
+                    break;
+                }
+                else if(laberinto[x+1][y]==' '||laberinto[x+1][y]=='Ï')
+                {
+                    x=x+1;//ESTE
+                    direcc=E;
+                    laberinto[x][y]='Ï';
+                    break;
+                }
+                else if(laberinto[x][y-1]==' '||laberinto[x][y-1]=='Ï')
+                {
+                    y=y-1;//NORTE
+                    direcc=N;
+                    laberinto[x][y]='Ï';
+                    break;
+                }
+                else if(laberinto[x-1][y]==' '||laberinto[x-1][y]=='Ï')
+                {
+                    x=x-1;//OESTE
+                    direcc=O;
+                    laberinto[x][y]='Ï';
+                    break;
+                }
+            }
+            case 3:
+            {
+                if(laberinto[x][y-1]==' '||laberinto[x][y-1]=='Ï')
+                {
+                    y=y-1;//NORTE
+                    direcc=N;
+                    laberinto[x][y]='Ï';
+                    break;
+                }
+                else if(laberinto[x-1][y]==' '||laberinto[x-1][y]=='Ï')
+                {
+                    x=x-1;//OESTE
+                    direcc=O;
+                    laberinto[x][y]='Ï';
+                    break;
+                }
+                else if(laberinto[x][y+1]==' '||laberinto[x][y+1]=='Ï')
+                {
+                    y=y+1;//SUR
+                    direcc=S;
+                    laberinto[x][y]='Ï';
+                    break;
+                }
+                else if(laberinto[x+1][y]==' '||laberinto[x+1][y]=='Ï')
+                {
+                    x=x+1;//ESTE
+                    direcc=E;
+                    laberinto[x][y]='Ï';
+                    break;
+                }
+            }
+        }
+    }
+//Una vez recorrido se comprueba si existe salida
+    if (x==(DIM-3)&&y==(DIM-1)) //Si la ultima posicion es la establecida como salida lo indica y viceversa
+    {
+        printf("\n\n\n  Tiene salida");
+    }
+    else
+    {
+        
+        printf("\n\n\n  No tiene salida ");
+    }
+    printf("\n\n");
+//se imprime el laberinto con el recorrido seguido
+    for(y=0;y<DIM;y++)
+    {
+        for(x=0;x<DIM;x++)
+        {
+            printf("%c", laberinto[x][y]);
+        }
+        printf("\n");
+    }
+/* Podemos hacer una funcion com paso de referencia para crear el laberinto que nos devuelva al principio el laberinto vacio, luego busque la salida y al final
+nos devuelva el laberinto con el recorrido*/
+    return 0;
+}
