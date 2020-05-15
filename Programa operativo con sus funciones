@@ -1,0 +1,274 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#define DIM 30 //modifique el tamaño del laberinto
+#define N 0
+#define S 1
+#define E 2
+#define O 3
+ 
+ /*Laberinto aleatorio recorrido siguiendo la regla de la mano derecha la cual nos dice que si existe una salida, esta se puede encontrar recorriendo 
+ el laberinto manteniendo siempre la pared a nuestra derecha. De esta forma se recorren todos los caminos posibles hasta llegar a la salida*/
+ 
+ 
+//Se puede cambiar la aleatoriedad del laberinto con rand()%_<_
+
+void crea_laberinto(char[][DIM]);
+void imprime_laberinto(char[][DIM]);
+void solucion(char[][DIM], int*, int *, int *);
+
+int main()
+{
+	srand(time(NULL));
+    char laberinto[DIM][DIM];
+    int x, y;
+    int movimiento=0;
+    int direccion=1;
+ 
+	//Crea el laberinto
+    crea_laberinto(laberinto);    
+    
+    
+	//Imprime el laberinto
+	imprime_laberinto(laberinto);
+	
+	
+	//Marca la pos. inicial
+	x=1;
+	y=1;
+    laberinto[1][1]='Ï';
+ 
+	for(movimiento=0;(!(x==(DIM-3)&&y==(DIM-1)))&&movimiento<=((DIM-1)*(DIM-1))&&x<DIM&&y<DIM;movimiento++) 
+	//mientras que no sea la casilla de salida && este dentro de las dimensiones del laberinto
+    	solucion(laberinto, &direccion, &x, &y);
+    
+	//Una vez recorrido se comprueba si existe salida
+    if (x==(DIM-3)&&y==(DIM-1)) //Si la ultima posicion es la establecida como salida lo indica y viceversa
+        printf("\n\n\n  Tiene salida");
+    else
+        printf("\n\n\n  No tiene salida ");
+    printf("\n\n");
+    
+        
+	//Imprime el laberinto
+	imprime_laberinto(laberinto);
+    
+    return 0;
+}
+
+///////////////////////////////////////////////////////////7
+
+void crea_laberinto(char lab[][DIM]){
+	int x, y;
+
+	for(y=0;y<DIM;y++)
+    {
+        for(x=0;x<DIM;x++)
+        {
+            if((( y>0 && y<(DIM-1) && x>0 && x<(DIM-1) ) && (rand()%5<3))  ||  /*Establece la salida en x=27 y=29*/(x==(DIM-3)&&y==(DIM-1)) || (x==1 && y==1)) 
+                lab[x][y]=' ';
+            else
+                lab[x][y]='Û';
+        }
+    }
+	////////// BORDES DEL LABERINTO
+   	y=0;
+    for(x=0;x<DIM;x++)
+        	lab[x][y]=205;
+        	
+    y=DIM-1;
+    for(x=0;x<DIM;x++)
+        {
+        	if(x==DIM-4)
+        		lab[x][y]=185;
+        	else
+        		if(x==DIM-3)
+        			lab[x][y]=' ';
+        		else 
+        			if(x==DIM-2)
+        				lab[x][y]=204;
+        				else	
+        					lab[x][y]=205;
+        }
+    x=0;
+    for(y=0;y<DIM;y++)
+        	lab[x][y]=186;
+        	
+    x=DIM-1;
+    for(y=0;y<DIM;y++)
+        	lab[x][y]=186;
+        	
+        //Esquinas
+        lab[0][0]=201;
+        lab[0][DIM-1]=200;
+        lab[DIM-1][0]=187;
+        lab[DIM-1][DIM-1]=188;
+	return;
+}
+
+///////////////////////////////////////////////////////////7
+
+void imprime_laberinto(char lab[][DIM]){
+	int x, y;
+	for(y=0;y<DIM;y++)
+    {
+        for(x=0;x<DIM;x++) 
+        	printf("%c", lab[x][y]);
+        	
+        printf("\n");
+        
+    }
+}
+
+///////////////////////////////////////////////////////////7
+
+void solucion(char laberinto[][DIM],int *direccion, int *X, int *Y){
+	int direcc;
+	int x;
+	int y;
+
+	direcc=*direccion;
+	x=*X;
+	y=*Y;
+
+	
+	switch(direcc)
+        {
+        	/* En cada caso hay que tener en cuenta el ultimo movimiento al elegir el orden de comprobaciones para seguir
+        	la regla de la mano derecha (Ej.: si nos hemos movido en direccion N la primera comprobacion sera un movimiento en
+        	direccion E, despues N, O y por ultimo deshacer el movimiento S)*/
+        	
+        	/* Si nos imaginamos una brujula recorrida en sentido antihorario la primera comprobacion siempre es la direccion anterior
+        	a la del ultimo movimiento y las siguientes corresponden al resto de direcc. de la brujula recorrida en sentido antihorario*/
+            case 0:
+            {
+                if(laberinto[x+1][y]==' '||laberinto[x+1][y]=='Ï') //Se comprueba si la casilla no es un muro
+                {
+                    x=x+1; //Se desplaza hacia el ESTE
+                    direcc=E; //Se almacena el ultimo movimiento para dirigirse al case correspondiente
+                    laberinto[x][y]='Ï'; //Se marca la casilla libre como recorrida
+                    break;
+                }
+                else if(laberinto[x][y-1]==' '||laberinto[x][y-1]=='Ï')
+                {
+                    y=y-1;//NORTE
+                    direcc=N;
+                    laberinto[x][y]='Ï';
+                    break;
+                }
+                else if(laberinto[x-1][y]==' '||laberinto[x-1][y]=='Ï')
+                {
+                    x=x-1;//OESTE
+                    direcc=O;
+                    laberinto[x][y]='Ï';
+                    break;
+                }
+                else if(laberinto[x][y+1]==' '||laberinto[x][y+1]=='Ï')
+                {
+                    y=y+1;//SUR
+                    direcc=S;
+                    laberinto[x][y]='Ï';
+                    break;
+                }
+            }
+            case 1:
+            {
+                if(laberinto[x-1][y]==' '||laberinto[x-1][y]=='Ï')
+                {
+                    x=x-1;//OESTE
+                    direcc=O;
+                    laberinto[x][y]='Ï';
+                    break;
+                }
+                else if(laberinto[x][y+1]==' '||laberinto[x][y+1]=='Ï')
+                {
+                    y=y+1;//SUR
+                    direcc=S;
+                    laberinto[x][y]='Ï';
+                    break;
+                }
+                else if(laberinto[x+1][y]==' '||laberinto[x+1][y]=='Ï')
+                {
+                    x=x+1;//ESTE
+                    direcc=E;
+                    laberinto[x][y]='Ï';
+                    break;
+                }
+                else if(laberinto[x][y-1]==' '||laberinto[x][y-1]=='Ï')
+                {
+                    y=y-1;//NORTE
+                    direcc=N;
+                    laberinto[x][y]='Ï';
+                    break;
+                }
+            }
+            case 2:
+            {
+                if(laberinto[x][y+1]==' '||laberinto[x][y+1]=='Ï')
+                {
+                    y=y+1;//SUR
+                    direcc=S;
+                    laberinto[x][y]='Ï';
+                    break;
+                }
+                else if(laberinto[x+1][y]==' '||laberinto[x+1][y]=='Ï')
+                {
+                    x=x+1;//ESTE
+                    direcc=E;
+                    laberinto[x][y]='Ï';
+                    break;
+                }
+                else if(laberinto[x][y-1]==' '||laberinto[x][y-1]=='Ï')
+                {
+                    y=y-1;//NORTE
+                    direcc=N;
+                    laberinto[x][y]='Ï';
+                    break;
+                }
+                else if(laberinto[x-1][y]==' '||laberinto[x-1][y]=='Ï')
+                {
+                    x=x-1;//OESTE
+                    direcc=O;
+                    laberinto[x][y]='Ï';
+                    break;
+                }
+            }
+            case 3:
+            {
+                if(laberinto[x][y-1]==' '||laberinto[x][y-1]=='Ï')
+                {
+                    y=y-1;//NORTE
+                    direcc=N;
+                    laberinto[x][y]='Ï';
+                    break;
+                }
+                else if(laberinto[x-1][y]==' '||laberinto[x-1][y]=='Ï')
+                {
+                    x=x-1;//OESTE
+                    direcc=O;
+                    laberinto[x][y]='Ï';
+                    break;
+                }
+                else if(laberinto[x][y+1]==' '||laberinto[x][y+1]=='Ï')
+                {
+                    y=y+1;//SUR
+                    direcc=S;
+                    laberinto[x][y]='Ï';
+                    break;
+                }
+                else if(laberinto[x+1][y]==' '||laberinto[x+1][y]=='Ï')
+                {
+                    x=x+1;//ESTE
+                    direcc=E;
+                    laberinto[x][y]='Ï';
+                    break;
+                }
+            }
+        }
+
+    *X=x;
+    *Y=y;
+    *direccion=direcc;
+    
+    return;
+}
