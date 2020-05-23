@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#define DIM 30 //modifique el tamaño del laberinto
+#define N 0
+#define S 1
+#define E 2
+#define O 3
+
+ /*Laberinto aleatorio recorrido siguiendo la regla de la mano derecha la cual nos dice que si existe una salida, esta se puede encontrar recorriendo 
+ el laberinto manteniendo siempre la pared a nuestra derecha. De esta forma se recorren todos los caminos posibles hasta llegar a la salida*/
+ 
+ 
+//Se puede cambiar la aleatoriedad del laberinto con rand()%<
+
+void crea_laberinto(char[][DIM]);
+void imprime_laberinto(char[][DIM]);
+void solucion(char[][DIM], int*, int *, int *);
+void fimprime_laberinto(char lab[][DIM], FILE *p);
+
+int main()
+{
+	FILE *l;
+	srand(time(NULL));
+    char laberinto[DIM][DIM];
+    int x, y;
+    int movimiento=0;
+    int direccion=1;
+ 
+	//Crea el laberinto
+    crea_laberinto(laberinto);    
+    
+    
+	//Imprime el laberinto
+	imprime_laberinto(laberinto);
+	
+	
+	//Marca la pos. inicial
+	x=1;
+	y=1;
+    laberinto[1][1]='Ï';
+ 
+	for(movimiento=0;(!(x==(DIM-3)&&y==(DIM-1)))&&movimiento<=((DIM-1)*(DIM-1))&&x<DIM&&y<DIM;movimiento++) 
+	//mientras que no sea la casilla de salida && este dentro de las dimensiones del laberinto
+    	solucion(laberinto, &direccion, &x, &y);
+    
+	//Una vez recorrido se comprueba si existe salida
+    if (x==(DIM-3)&&y==(DIM-1)) //Si la ultima posicion es la establecida como salida lo indica y viceversa
+        printf("\n\n\n  Tiene salida");
+    else
+        printf("\n\n\n  No tiene salida ");
+    printf("\n\n");
+    
+    l=fopen("laberinto.txt","wt");
+    
+    if(l==NULL)
+    {
+    	printf("Error al abrir el fichero");
+	}
+	else
+	{
+		fimprime_laberinto(laberinto,l);
+		fclose(l);
+	}
+        
+	//Imprime el laberinto
+	imprime_laberinto(laberinto);
+    
+    return 0;
+}
